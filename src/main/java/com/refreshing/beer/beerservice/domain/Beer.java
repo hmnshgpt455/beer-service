@@ -39,5 +39,5 @@ public class Beer {
     private Long upc;
 
     private Integer minimumOnHand;
-    private Integer quantityOnHand;
+    private Integer quantityToBrew;
 }
