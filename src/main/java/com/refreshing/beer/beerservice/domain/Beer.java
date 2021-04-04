@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -38,6 +39,7 @@ public class Beer {
     @Column(unique = true)
     private Long upc;
 
+    private BigDecimal price;
     private Integer minimumOnHand;
     private Integer quantityToBrew;
 }
