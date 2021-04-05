@@ -1,5 +1,6 @@
 package com.refreshing.beer.beerservice.web.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.refreshing.beer.beerservice.web.model.BeerDTO;
 import com.refreshing.beer.beerservice.web.model.BeerStyleEnum;
