@@ -1,5 +1,6 @@
 package com.refreshing.beer.beerservice.web.controller;
 
+import com.refreshing.beer.beerservice.web.controller.errors.NotFoundError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class MvcExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<List> validationErrorHandler(ConstraintViolationException exception) {
+
         List<String> errorList = new ArrayList<>(exception.getConstraintViolations().size());
         exception.getConstraintViolations().forEach(constraintViolation -> errorList.add(constraintViolation.toString()));
 
@@ -26,5 +28,15 @@ public class MvcExceptionHandler {
         headers.add("errorUUID", UUID.randomUUID().toString());
         headers.add("errorCode", CONSTRAINT_VALIDATION_FAILURE);
         return new ResponseEntity<>(errorList, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<NotFoundError> notFoundExceptionHandler(NotFoundException exception) {
+
+        NotFoundError errorObject = new NotFoundError(exception.getErrorCode(), exception.getMessage());
+        MultiValueMap<String, String> headers = new HttpHeaders();
+        headers.add("errorUUID", UUID.randomUUID().toString());
+        headers.add("errorCode", exception.getErrorCode());
+        return new ResponseEntity<>(errorObject, headers, HttpStatus.BAD_REQUEST);
     }
 }

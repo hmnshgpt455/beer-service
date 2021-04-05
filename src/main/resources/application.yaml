@@ -1,0 +1,5 @@
+custom:
+  exceptions:
+    beerEntity:
+      notFoundExceptionErrorCode: "BEER_WITH_GIVEN_ID_NOT_FOUND"
+      notFoundErrorMessage: "Beer with given id not found"
