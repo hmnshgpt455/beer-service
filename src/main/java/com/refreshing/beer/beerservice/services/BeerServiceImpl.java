@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -45,12 +46,17 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public void updateBeer(BeerDTO beerDTO, UUID beerId) {
-        if (!beerRepository.existsById(beerId)) {
+        Optional<Beer> beerOptional = beerRepository.findById(beerId);
+
+        if (beerOptional.isEmpty()) {
             throw new NotFoundException(BEER_WITH_GIVEN_ID_NOT_FOUND, CANNOT_FIND_BEER_WITH_GIVEN_ID);
         }
-
-        beerDTO.setId(beerId);
-        saveAndReturnBeer(beerDTO);
+        Beer beer = beerOptional.get();
+        beer.setBeerName(beerDTO.getBeerName());
+        beer.setBeerStyle(beerDTO.getBeerStyle().toString());
+        beer.setUpc(beerDTO.getUpc());
+        beer.setPrice(beerDTO.getPrice());
+        beerRepository.save(beer);
     }
 
     @Override
