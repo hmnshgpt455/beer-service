@@ -11,12 +11,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor //This will inject the dependencies automatically because we have made them final
 @RequestMapping(BeerController.API_V1_BEER)
+@Validated
 public class BeerController {
 
     public static final String API_V1_BEER = "/api/v1/beer";
@@ -25,9 +28,8 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping(produces = { "application/json" })
-    @Validated
     @ResponseStatus(HttpStatus.OK)
-    public BeerPageList listBeers(@RequestParam(value = "pageNumber", required = false) @Positive Integer pageNumber,
+    public BeerPageList listBeers(@RequestParam(value = "pageNumber", required = false) @PositiveOrZero Integer pageNumber,
                                   @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize,
                                   @RequestParam(value = "beerName", required = false) String beerName,
                                   @RequestParam(value = "beerStyle", required = false) BeerStyleEnum beerStyle) {
