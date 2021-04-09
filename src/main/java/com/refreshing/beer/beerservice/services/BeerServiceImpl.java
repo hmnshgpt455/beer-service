@@ -1,12 +1,19 @@
 package com.refreshing.beer.beerservice.services;
 
+import com.refreshing.beer.beerservice.domain.Beer;
 import com.refreshing.beer.beerservice.repositories.BeerRepository;
 import com.refreshing.beer.beerservice.web.controller.NotFoundException;
 import com.refreshing.beer.beerservice.web.mappers.BeerMapper;
 import com.refreshing.beer.beerservice.web.model.BeerDTO;
+import com.refreshing.beer.beerservice.web.model.BeerPageList;
+import com.refreshing.beer.beerservice.web.model.BeerStyleEnum;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BeerServiceImpl implements BeerService {
@@ -44,5 +51,36 @@ public class BeerServiceImpl implements BeerService {
 
         beerDTO.setId(beerId);
         saveAndReturnBeer(beerDTO);
+    }
+
+    @Override
+    public BeerPageList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest) {
+
+        Page<Beer> beerPage = getBeerPage(beerName, beerStyle, pageRequest);
+        return new BeerPageList(beerPage
+                .getContent()
+                .stream()
+                .map(beerMapper::beerToBeerDTO)
+                .collect(Collectors.toList()),
+                PageRequest.of(beerPage.getPageable().getPageNumber(),
+                        beerPage.getPageable().getPageSize()),
+                beerPage.getTotalElements());
+    }
+
+    private Page<Beer> getBeerPage(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest) {
+
+        if (!ObjectUtils.isEmpty(beerName) && !ObjectUtils.isEmpty(beerStyle)) {
+            return beerRepository.findAllByBeerNameAndBeerStyle(beerName, beerStyle, pageRequest);
+        }
+
+        if (ObjectUtils.isEmpty(beerName) && !ObjectUtils.isEmpty(beerStyle)) {
+            return beerRepository.findAllByBeerStyle(beerStyle, pageRequest);
+        }
+
+        if (!ObjectUtils.isEmpty(beerName) && ObjectUtils.isEmpty(beerStyle)) {
+            return beerRepository.findAllByBeerName(beerName, pageRequest);
+        }
+
+        return beerRepository.findAll(pageRequest);
     }
 }
