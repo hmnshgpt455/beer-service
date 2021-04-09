@@ -27,7 +27,7 @@ public class BeerController {
     @GetMapping(produces = { "application/json" })
     @Validated
     @ResponseStatus(HttpStatus.OK)
-    public BeerPageList listBeers(@RequestParam(value = "pageNumber") @Positive Integer pageNumber,
+    public BeerPageList listBeers(@RequestParam(value = "pageNumber", required = false) @Positive Integer pageNumber,
                                   @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize,
                                   @RequestParam(value = "beerName", required = false) String beerName,
                                   @RequestParam(value = "beerStyle", required = false) BeerStyleEnum beerStyle) {
