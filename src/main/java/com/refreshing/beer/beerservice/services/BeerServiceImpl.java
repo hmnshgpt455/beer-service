@@ -7,6 +7,7 @@ import com.refreshing.beer.beerservice.web.mappers.BeerMapper;
 import com.refreshing.beer.beerservice.web.model.BeerDTO;
 import com.refreshing.beer.beerservice.web.model.BeerPageList;
 import com.refreshing.beer.beerservice.web.model.BeerStyleEnum;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "beerCache", key = "#beerId", condition = "#showInventoryOnHand == false")
     public BeerDTO getBeerById(UUID beerId, Boolean showInventoryOnHand) {
+        System.out.println("getBeerById was called");
         beerMapper.setMapInventoryOnHand(showInventoryOnHand);
         return beerMapper.beerToBeerDTO(beerRepository.findById(beerId)
                 .orElseThrow(() -> new NotFoundException(BEER_WITH_GIVEN_ID_NOT_FOUND, CANNOT_FIND_BEER_WITH_GIVEN_ID)));
@@ -61,8 +64,9 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "beerListCache", condition = "#showInventoryOnHand == false") //In this the key will be generated based on the arguments of the parameters
     public BeerPageList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, Boolean showInventoryOnHand) {
-
+        System.out.println("listBeers was called");
         beerMapper.setMapInventoryOnHand(showInventoryOnHand);
         Page<Beer> beerPage = getBeerPage(beerName, beerStyle, pageRequest);
         return new BeerPageList(beerPage

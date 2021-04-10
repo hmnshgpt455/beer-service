@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -18,7 +19,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BeerDTO {
+public class BeerDTO implements Serializable {
+
+    static final long serialVersionUID = 2879319503285998298L;
 
     @Null //This will make sure whenever this POJO is coming from UI, this field always has to be null
     private UUID id;
