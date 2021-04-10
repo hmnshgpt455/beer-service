@@ -17,13 +17,21 @@ public abstract class BeerMapper {
 
     private BeerInventoryService beerInventoryService;
 
+    private Boolean mapInventoryOnHand;
+
     @AfterMapping
     public void setQuantityOnHand(Beer beer, @MappingTarget BeerDTO beerDTO) {
-        beerDTO.setQuantityOnHand(beerInventoryService.getOnHandQuantity(beer.getId()));
+        if (mapInventoryOnHand) {
+            beerDTO.setQuantityOnHand(beerInventoryService.getOnHandQuantity(beer.getId()));
+        }
     }
 
     @Autowired
     public void setBeerInventoryService(BeerInventoryService beerInventoryService) {
         this.beerInventoryService = beerInventoryService;
+    }
+
+    public void setMapInventoryOnHand(Boolean mapInventoryOnHand) {
+        this.mapInventoryOnHand = mapInventoryOnHand;
     }
 }

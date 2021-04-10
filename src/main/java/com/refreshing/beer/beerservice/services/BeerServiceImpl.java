@@ -30,7 +30,8 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public BeerDTO getBeerById(UUID beerId) {
+    public BeerDTO getBeerById(UUID beerId, Boolean showInventoryOnHand) {
+        beerMapper.setMapInventoryOnHand(showInventoryOnHand);
         return beerMapper.beerToBeerDTO(beerRepository.findById(beerId)
                 .orElseThrow(() -> new NotFoundException(BEER_WITH_GIVEN_ID_NOT_FOUND, CANNOT_FIND_BEER_WITH_GIVEN_ID)));
     }
@@ -60,8 +61,9 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public BeerPageList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest) {
+    public BeerPageList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, Boolean showInventoryOnHand) {
 
+        beerMapper.setMapInventoryOnHand(showInventoryOnHand);
         Page<Beer> beerPage = getBeerPage(beerName, beerStyle, pageRequest);
         return new BeerPageList(beerPage
                 .getContent()
