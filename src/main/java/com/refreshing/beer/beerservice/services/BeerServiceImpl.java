@@ -79,6 +79,13 @@ public class BeerServiceImpl implements BeerService {
                 beerPage.getTotalElements());
     }
 
+    @Override
+    @Cacheable(cacheNames = "beerCache", key = "#upc", condition = "#showInventoryOnHand == false")
+    public BeerDTO getBeerByUpcCode(String upc, Boolean showInventoryOnHand) {
+        beerMapper.setMapInventoryOnHand(showInventoryOnHand);
+        return beerMapper.beerToBeerDTO(beerRepository.findByUpc(upc));
+    }
+
     private Page<Beer> getBeerPage(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest) {
 
         if (!ObjectUtils.isEmpty(beerName) && !ObjectUtils.isEmpty(beerStyle)) {

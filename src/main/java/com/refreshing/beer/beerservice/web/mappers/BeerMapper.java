@@ -17,7 +17,7 @@ public abstract class BeerMapper {
 
     private BeerInventoryService beerInventoryService;
 
-    private Boolean mapInventoryOnHand;
+    private Boolean mapInventoryOnHand = false;
 
     @AfterMapping
     public void setQuantityOnHand(Beer beer, @MappingTarget BeerDTO beerDTO) {

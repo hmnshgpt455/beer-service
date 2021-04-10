@@ -1,5 +1,6 @@
 package com.refreshing.beer.beerservice.web.controller;
 
+import com.refreshing.beer.beerservice.domain.Beer;
 import com.refreshing.beer.beerservice.services.BeerService;
 import com.refreshing.beer.beerservice.web.model.BeerDTO;
 import com.refreshing.beer.beerservice.web.model.BeerPageList;
@@ -61,6 +62,12 @@ public class BeerController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateBeerById(@RequestBody @Valid BeerDTO beerDTO, @PathVariable("beerId") UUID beerId) {
         beerService.updateBeer(beerDTO, beerId);
+    }
+
+    @GetMapping("/upc/{upc}")
+    public BeerDTO getBeerByUpcCode(@PathVariable("upc") String upc,
+                                    @RequestParam(value = "showInventoryOnHand", defaultValue = "false") Boolean showInventoryOnHand) {
+        return beerService.getBeerByUpcCode(upc, showInventoryOnHand);
     }
 
 }
