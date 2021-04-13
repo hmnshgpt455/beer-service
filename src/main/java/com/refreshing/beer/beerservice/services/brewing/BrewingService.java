@@ -1,4 +1,4 @@
-package com.refreshing.beer.beerservice.services;
+package com.refreshing.beer.beerservice.services.brewing;
 
 import com.refreshing.beer.beerservice.config.JmsConfig;
 import com.refreshing.beer.beerservice.domain.Beer;
