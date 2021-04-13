@@ -4,7 +4,6 @@ import com.refreshing.beer.beerservice.domain.Beer;
 import com.refreshing.beer.beerservice.services.inventory.BeerInventoryService;
 import com.refreshing.beer.beerservice.web.model.BeerDTO;
 import org.mapstruct.AfterMapping;
-import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public abstract class BeerMapper {
     @AfterMapping
     public void setQuantityOnHand(Beer beer, @MappingTarget BeerDTO.BeerDTOBuilder beerDTO) {
         if (mapInventoryOnHand) {
-            beerDTO.quantityOnHand(beerInventoryService.getOnHandQuantity(beer.getId()));
+            beerDTO.quantityOnHand(beerInventoryService.getOnHandQuantityByUpc(beer.getUpc()));
         }
     }
 

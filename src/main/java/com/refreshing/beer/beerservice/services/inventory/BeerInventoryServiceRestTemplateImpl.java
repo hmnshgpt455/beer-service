@@ -19,7 +19,8 @@ import java.util.UUID;
 @ConfigurationProperties(prefix = "brewery", ignoreUnknownFields = false)
 public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryService {
 
-    private static final String INVENTORY_API_PATH = "api/v1/beer/{beerId}/inventory";
+    private static final String INVENTORY_API_WITH_BEER_ID_PATH = "api/v1/beer/{beerId}/inventory";
+    private static final String INVENTORY_API_WITH_BEER_UPC_PATH = "api/v1/beer/upc/{upc}/inventory";
     private String beerInventoryServiceHost;
     private final RestTemplate restTemplate;
 
@@ -31,13 +32,25 @@ public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryServic
     public Integer getOnHandQuantity(UUID beerId) {
 
         log.debug("Calling inventory service for beer with id : " + beerId);
-        ResponseEntity<List<BeerInventoryDTO>> responseEntity = restTemplate.exchange(beerInventoryServiceHost + INVENTORY_API_PATH,
+        ResponseEntity<List<BeerInventoryDTO>> responseEntity = restTemplate.exchange(beerInventoryServiceHost + INVENTORY_API_WITH_BEER_ID_PATH,
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<BeerInventoryDTO>>() {}, (Object) beerId);
 
         return Objects.requireNonNull(responseEntity.getBody())
                                 .stream()
                                 .mapToInt(BeerInventoryDTO::getQuantityOnHand)
                                 .sum();
+    }
+
+    @Override
+    public Integer getOnHandQuantityByUpc(String upc) {
+        log.debug("Calling inventory service for beer with upc : " + upc);
+        ResponseEntity<List<BeerInventoryDTO>> responseEntity = restTemplate.exchange(beerInventoryServiceHost + INVENTORY_API_WITH_BEER_UPC_PATH,
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<BeerInventoryDTO>>() {}, (Object) upc);
+
+        return Objects.requireNonNull(responseEntity.getBody())
+                .stream()
+                .mapToInt(BeerInventoryDTO::getQuantityOnHand)
+                .sum();
     }
 
     public void setBeerInventoryServiceHost(String beerInventoryServiceHost) {
