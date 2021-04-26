@@ -4,6 +4,7 @@ import io.github.hmnshgpt455.brewery.model.BeerInventoryDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +15,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Profile("!local-discovery")
 @Service
 @Slf4j
 @ConfigurationProperties(prefix = "brewery", ignoreUnknownFields = false)
 public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryService {
 
     private static final String INVENTORY_API_WITH_BEER_ID_PATH = "api/v1/beer/{beerId}/inventory";
-    private static final String INVENTORY_API_WITH_BEER_UPC_PATH = "api/v1/beer/upc/{upc}/inventory";
+    public static final String INVENTORY_API_WITH_BEER_UPC_PATH = "api/v1/beer/upc/{upc}/inventory";
     private String beerInventoryServiceHost;
     private final RestTemplate restTemplate;
 
