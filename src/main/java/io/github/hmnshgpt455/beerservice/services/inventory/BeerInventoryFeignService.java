@@ -1,6 +1,7 @@
 package io.github.hmnshgpt455.beerservice.services.inventory;
 
 import io.github.hmnshgpt455.brewery.model.BeerInventoryDTO;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class BeerInventoryFeignService implements BeerInventoryService {
 
     private final InventoryServiceFeignClient inventoryServiceFeignClient;
+    private final InventoryFailoverFeignClient inventoryFailoverFeignClient;
 
     @Override
     public Integer getOnHandQuantity(UUID beerId) {
@@ -25,17 +27,31 @@ public class BeerInventoryFeignService implements BeerInventoryService {
     }
 
     @Override
+    @CircuitBreaker(name = "inventory-service", fallbackMethod = "getFallBackInventory")
     public Integer getOnHandQuantityByUpc(String upc) {
         log.debug("Calling Inventory service - beer upc " + upc);
 
         ResponseEntity<List<BeerInventoryDTO>> responseEntity = inventoryServiceFeignClient.getOnHandInventory(upc);
 
-        Integer onHand = Objects.requireNonNull(responseEntity.getBody())
+        Integer onHand = getTotalOnHandQuantity(responseEntity);
+
+        log.debug("Beer UPC : " + upc + "On hand is: " + onHand);
+        return onHand;
+    }
+
+    private Integer getTotalOnHandQuantity(ResponseEntity<List<BeerInventoryDTO>> responseEntity) {
+        return Objects.requireNonNull(responseEntity.getBody())
                 .stream()
                 .mapToInt(BeerInventoryDTO::getQuantityOnHand)
                 .sum();
+    }
 
-        log.debug("Beer UPC : " + upc + "On hand is: " + onHand);
+    public Integer getFallBackInventory(String upc, Throwable cause) {
+        ResponseEntity<List<BeerInventoryDTO>> responseEntity = inventoryFailoverFeignClient.getOnHandInventory();
+
+        Integer onHand = getTotalOnHandQuantity(responseEntity);
+
+        log.debug("Beer UPC : " + "On hand is: " + onHand);
         return onHand;
     }
 }
