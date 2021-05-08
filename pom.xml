@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.hmnshgpt455</groupId>
         <artifactId>brewery-bom</artifactId>
-        <version>1.7</version>
+        <version>1.8</version>
     </parent>
     <artifactId>beer-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -49,6 +49,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>6.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
